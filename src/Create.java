@@ -80,9 +80,9 @@ public class Create extends Repository{
 		bw.newLine();
 		bw.newLine();
 		bw.newLine();
-		bw.write("Command: Create Repo\r\n");
+		bw.write("Command: create-repo\r\n");
 		bw.write("Time repo created: " + ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\r\n");
-		bw.write("User command: " + src + " " + target +"\r\n");
+		bw.write("User command: create-repo " + src + " " + target +"\r\n");
 		bw.write("Source path: " + src + "\r\n");
 		bw.write("Target path: " + target + "\r\n");
 		
@@ -120,3 +120,4 @@ public class Create extends Repository{
 	}
 
 }
+
