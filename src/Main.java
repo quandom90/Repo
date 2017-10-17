@@ -26,6 +26,15 @@ public class Main {
 		if(command == "label-manifest")
 		{
 			String manifest = kb.next();
+			System.out.println("Enter label: ");
+			String label = kb.nextLine();
+			File manifestFile = new File(manifest);
+			try {
+				addLabel(manifestFile, label);
+			} catch (IOException | RepoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//	TODO	: create manifest label function
 		}
 		else
@@ -62,7 +71,12 @@ public class Main {
 					break;
 				case "check-in":
 					CheckIn checkin = new CheckIn(src, target);
-					//	TODO: call execution of checkin
+					try {
+						checkin.execute();
+					} catch (RepoException | IOException e) {
+					// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				case "check-out":
 					CheckOut checkout = new CheckOut(src, target);

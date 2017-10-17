@@ -1,0 +1,12 @@
+mypt
+
+
+
+Command: create-repo
+Time repo created: Tue, 17 Oct 2017 01:50:10 -0700
+User command: create-repo E:\Repo\SCM\mypt E:\Repo\SCM\mypt3
+Source path: E:\Repo\SCM\mypt
+Target path: E:\Repo\SCM\mypt3
+File Copied Info: 3670.9.txt goodbye.txt E:\Repo\SCM\mypt3\mypt\goodbye.txt\3670.9.txt
+File Copied Info: 8466.11.txt hello.txt E:\Repo\SCM\mypt3\mypt\hello.txt\8466.11.txt
+File Copied Info: 72.1.txt hx.txt E:\Repo\SCM\mypt3\mypt\hx.txt\72.1.txt
