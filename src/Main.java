@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Scanner;
  
 public class Main {
@@ -11,67 +12,8 @@ public class Main {
 	//	Runs main program
 	//	Accepts user input of a src and target path to execute repo cloning
 	public static void main(String[] args) {
-		@SuppressWarnings("resource")
-		Scanner kb = new Scanner(System.in);
-		System.out.println("Repository Commands\n");
-		System.out.println("1. create-repo [source folder] [target folder]");
-		System.out.println("2. check-in [source folder] [target folder]");
-		System.out.println("3. check-out [source folder] [target folder]");
-		System.out.println("4. label-manifest [manifest file]");
-		System.out.println("Enter the command and arguments you would like to perform:");
-		String command = kb.next();
-		System.out.println("Command: " + command);
 		
-		
-		if(command == "label-manifest")
-		{
-			String manifest = kb.next();
-			//	TODO	: create manifest label function
-		}
-		else
-		{	
-			String src = kb.next();
-			String target = kb.next();
-			kb.nextLine();
-			
-			System.out.println("src: " + src);
-			System.out.println("target: " + target);
-			
-			switch (command) {
-				case "create-repo":
-					Repository rep = new Create(src, target);
-					try {
-						rep.execute();
-						System.out.println("repo created");
-						
-						//Generate Manifest File
-						String manifestDir = target + File.separator + "manifest.txt";
-						File manifest = new File(manifestDir);
-						rep.generateManifest(manifest);
-						
-						System.out.println("Enter label: ");
-						String label = kb.nextLine();
-						addLabel(manifest, label);
-					} catch (RepoException e) {
-					
-						e.printStackTrace();
-					} catch (IOException e) {
-					
-						e.printStackTrace();
-					}
-					break;
-				case "check-in":
-					CheckIn checkin = new CheckIn(src, target);
-					//	TODO: call execution of checkin
-					break;
-				case "check-out":
-					CheckOut checkout = new CheckOut(src, target);
-					//	TODO: call execution of checkout
-					break;
-				default:
-					System.out.println("Invalid command.");
-			}
-		}
+		repoMenu();
 	}
 	
 	public static void addLabel(File manifest, String label) throws IOException, RepoException{
@@ -107,5 +49,96 @@ public class Main {
 		bw.close();
 	}
 	
-
+	public static void repoMenu()
+	{
+		@SuppressWarnings("resource")
+		Scanner kb = new Scanner(System.in);
+		boolean finished = false;
+		
+		while(!finished)
+		{
+			System.out.println("Repository Commands\n");
+			System.out.println("1. create-repo [source folder] [target folder]");
+			System.out.println("2. check-in [source folder] [target folder]");
+			System.out.println("3. check-out [source folder] [target folder]");
+			System.out.println("4. label-manifest [manifest file] [label]");
+			System.out.println("5. exit-menu");
+			System.out.println("Enter the command and arguments you would like to perform:");
+			String command = kb.next();
+			System.out.println("Command: " + command);
+			
+			if(command.equals("exit-menu"))
+			{
+				System.out.println("Exiting menu.");
+				finished = true;
+			}
+			else if(command.equals("label-manifest"))
+			{
+				String manifestDir = kb.next();
+				String label = kb.next();
+				kb.nextLine();
+				//	TODO	: create manifest label function
+				File manifest = new File(manifestDir);
+				try {
+					addLabel(manifest, label);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (RepoException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				System.out.println("Entered else");
+				String src = kb.next();
+				String target = kb.next();
+				kb.nextLine();
+				
+				if(command.equals("create-repo"))
+				{
+					Repository rep = new Create(src, target);
+					try {
+						rep.execute();
+						System.out.println("repo created");
+						
+						//Generate Manifest File
+						String manifestDir = target + File.separator + "manifest.txt";
+						File manifest = new File(manifestDir);
+						rep.generateManifest(manifest);
+						
+						System.out.println("Enter label: ");
+						String label = kb.nextLine();
+						addLabel(manifest, label);
+					} catch (RepoException e) {
+					
+						e.printStackTrace();
+					} catch (IOException e) {
+					
+						e.printStackTrace();
+					}
+				}
+				else if (command.equals("check-in"))
+				{
+					CheckIn checkin = new CheckIn(src, target);
+				}
+				else if (command.equals("check-in"))
+				{
+					//	TODO: get manifest file from cache
+					//	label mapped to manifest file
+					//	Dummy code
+					HashMap<String, String> cache = new HashMap<String, String>();
+					cache.put("label1", "manifest1.mani");
+					File maniFile = new File(cache.get("label1"));
+					
+					CheckOut checkout = new CheckOut(src, target);
+				}
+				else {
+					System.out.println("Invalid command");
+				}
+			}
+	
+		}
+	}
 }
