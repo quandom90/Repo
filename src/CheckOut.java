@@ -35,6 +35,7 @@ public class CheckOut extends Repository{
 		if(targetFile.isDirectory() && targetFile.list().length == 0){ // if target entered is directory and is empty
 			ArrayList<File> sourceDirectories = readManifest();	// grab source directories from manifest
 			rootDirectory = findRoot(Paths.get(src));	// get root directory from source
+			
 			for(File s: sourceDirectories) {
 				//copy files here
 				File targetDir = new File(s.toString().replace(rootDirectory,target).trim());
@@ -52,10 +53,11 @@ public class CheckOut extends Repository{
 		} else {
 			throw new RepoException("Please select a valid entry point for checkout (Checkout Folder must be empty)");
 		}
+		System.out.println("Checkout Successful\n");
 	}
 	
 	//return root directory
-	public String findRoot(Path directory) {
+	public String findRoot(Path directory) throws RepoException {
 			try (DirectoryStream<Path> ds = Files.newDirectoryStream(directory)) {
 				for (Path child : ds) {
 						if (Files.isDirectory(child)) {
@@ -73,6 +75,7 @@ public class CheckOut extends Repository{
 			} catch (Exception e) {
 				System.out.println("Error walking through directories");
 			}
+			if (rootDirectory == null) throw new RepoException("Not a repository");
 		return null;
 		
 	}
