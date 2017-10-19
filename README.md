@@ -4,15 +4,17 @@ Team:
 	
 	Quan Nguyen
 	Marvin Mendez
+	Mingtau Li
 
 Contact Info: 
 	
 	Quan: quanlynguyen90@gmail.com
 	Marvin: reacxtion@gmail.com
+	Mingtau: mingtau.li@gmail.com
 
 Class Number: CECS 543
 
-Project Part: #1: Create Repository
+Project Part: #2: Checkin, Checkout
 
 Intro:
 

@@ -23,7 +23,9 @@ public class Create extends Repository{
 	public void execute() throws RepoException, IOException{
 		if ((target != "")&&(src != "")){
 			File rootSrc = new File(src);
+			System.out.println("source::"+src); //delete me
 			String rootRep = target + File.separator + rootSrc.getName();
+			System.out.println("Rootrep::"+rootRep); //delete me
 			File rep = new File(rootRep);
 			
 			if (rep.mkdir()){
