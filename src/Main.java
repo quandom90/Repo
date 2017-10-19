@@ -54,7 +54,7 @@ public class Main {
 						System.out.println("repo created");
 						
 						//Generate Manifest File
-						String manifestDir = target + File.separator + "manifest.txt";
+						String manifestDir = target + File.separator + "manifest1.mani";
 						File manifest = new File(manifestDir);
 						rep.generateManifest(manifest);
 						
@@ -73,6 +73,9 @@ public class Main {
 					CheckIn checkin = new CheckIn(src, target);
 					try {
 						checkin.execute();
+						String manifestDir = target + File.separator + "checkin1.mani";
+						File manifest = new File(manifestDir);
+						checkin.generateManifest(manifest);
 					} catch (RepoException | IOException e) {
 					// TODO Auto-generated catch block
 						e.printStackTrace();
