@@ -49,8 +49,6 @@ public class CheckOut extends Repository{
 				copyFile(s,targetDest,targetName);
 			}
 			int i = 0;
-			System.out.println("root directory: ----->"+rootDirectory);
-			System.out.println("mani file:" +new File(rootDirectory).getParent() + File.separator +"Checkout"+i+".mani");
 			
 			while(new File(new File(rootDirectory).getParent() + File.separator +"Checkout"+i+".mani").exists()){
 				i++;
