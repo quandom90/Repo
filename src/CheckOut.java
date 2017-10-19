@@ -1,30 +1,24 @@
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.channels.FileChannel;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 
 public class CheckOut extends Repository{
-	private File maniFile;
-	private String rootDirectory;
-	private ArrayList<String> filesCopied;
+	private File maniFile;	// manifest file
+	private String rootDirectory;	// parent directory of project
+	private ArrayList<String> filesCopied;	// keeps track of files copied
 	
 	public CheckOut(String src, String target, File mf) {
 		super(src, target);
@@ -34,13 +28,13 @@ public class CheckOut extends Repository{
 
 	@Override
 	public void execute() throws RepoException, IOException {
-		File targetFile = new File(target);
+		File targetFile = new File(target);	// if target doesn't exist, make one
 		if(!targetFile.exists()) {
 			targetFile.mkdirs();
 		}
-		if(targetFile.isDirectory() && targetFile.list().length == 0){ //if target entered is directory and is empty
-			ArrayList<File> sourceDirectories = readManifest();
-			rootDirectory = findRoot(Paths.get(src));
+		if(targetFile.isDirectory() && targetFile.list().length == 0){ // if target entered is directory and is empty
+			ArrayList<File> sourceDirectories = readManifest();	// grab source directories from manifest
+			rootDirectory = findRoot(Paths.get(src));	// get root directory from source
 			for(File s: sourceDirectories) {
 				//copy files here
 				File targetDir = new File(s.toString().replace(rootDirectory,target).trim());
@@ -48,14 +42,15 @@ public class CheckOut extends Repository{
 				File targetDest = targetDir.getParentFile().getParentFile();
 				copyFile(s,targetDest,targetName);
 			}
-			int i = 0;
 			
+			// generate numbered manifest
+			int i = 0;
 			while(new File(new File(rootDirectory).getParent() + File.separator +"Checkout"+i+".mani").exists()){
 				i++;
 			}
 			generateManifest(new File(new File(rootDirectory).getParent() + File.separator + "Checkout"+i+".mani"));
 		} else {
-			throw new RepoException("Please select a valid entry point for checkout");
+			throw new RepoException("Please select a valid entry point for checkout (Checkout Folder must be empty)");
 		}
 	}
 	
@@ -63,10 +58,10 @@ public class CheckOut extends Repository{
 	public String findRoot(Path directory) {
 			try (DirectoryStream<Path> ds = Files.newDirectoryStream(directory)) {
 				for (Path child : ds) {
-						if (Files.isDirectory(child)) { // make dir
+						if (Files.isDirectory(child)) {
 							File fileList[] = directory.toFile().listFiles();
 							for(File f : fileList) {
-								if(f.toString().contains(".mani")) {
+								if(f.toString().contains(".mani")) { // if files in the directory contains manifest files, root is found
 									return child.toString();
 								}
 							}
@@ -119,12 +114,11 @@ public class CheckOut extends Repository{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return FileList;
+		return FileList; // return list of directories from manifest
 	}
 	
-
+	 // copies contents from one file to another
 	public void copyFile(File source, File target, String fileName){
-
 		PrintWriter writer = null;
 		Scanner read = null;
 		try {
@@ -151,6 +145,7 @@ public class CheckOut extends Repository{
 		}
 	}
 	
+	// return nthIndex of substring in select string
 	public  int nthIndexOf(String s, String sub, int n) {
 		int index = s.indexOf(sub);
 		while (--n > 0 && index != -1)
