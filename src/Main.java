@@ -91,8 +91,9 @@ public class Main {
 			}
 			else
 			{
-				System.out.println("Entered else");
+				System.out.print(">");
 				String src = kb.next();
+				System.out.print("\n>");
 				String target = kb.next();
 				kb.nextLine();
 				
@@ -104,7 +105,7 @@ public class Main {
 						System.out.println("repo created");
 						
 						//Generate Manifest File
-						String manifestDir = target + File.separator + "manifest.txt";
+						String manifestDir = target + File.separator + "manifest.mani";
 						File manifest = new File(manifestDir);
 						rep.generateManifest(manifest);
 						
@@ -123,16 +124,23 @@ public class Main {
 				{
 					CheckIn checkin = new CheckIn(src, target);
 				}
-				else if (command.equals("check-in"))
+				else if (command.equals("check-out"))
 				{
 					//	TODO: get manifest file from cache
 					//	label mapped to manifest file
 					//	Dummy code
-					HashMap<String, String> cache = new HashMap<String, String>();
-					cache.put("label1", "manifest1.mani");
-					File maniFile = new File(cache.get("label1"));
+//					HashMap<String, String> cache = new HashMap<String, String>();
+//					cache.put("label1", "manifest.mani");
+//					File maniFile = new File(cache.get("label1"));
 					
-					CheckOut checkout = new CheckOut(src, target);
+//					CheckOut checkout = new CheckOut(src, target, maniFile);
+					CheckOut checkout = new CheckOut(src, target, new File("C:\\trashme2\\repo_folder\\manifest.mani"));
+					
+					try {
+						checkout.execute();
+					} catch (RepoException | IOException e) {
+						e.printStackTrace();
+					}
 				}
 				else {
 					System.out.println("Invalid command");
