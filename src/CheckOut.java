@@ -144,7 +144,7 @@ public class CheckOut extends Repository{
 		}finally {
 			read.close();
 			writer.close();
-			filesCopied.add("File Copied Info: " + fileName + " " + source.getName() + " " + source + "\r\n");
+			filesCopied.add("File Copied Info: " + fileName + " " + source.getName() + " " + target + File.separator + fileName + "\r\n");
 		}
 	}
 	
