@@ -14,6 +14,7 @@ public class Main {
 	public static void main(String[] args) {
 		
 		repoMenu();
+		
 	}
 	
 	public static void addLabel(File manifest, String label) throws IOException, RepoException{
