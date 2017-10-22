@@ -1,0 +1,12 @@
+label1
+
+
+
+Command: create-repo
+Time repo created: Sat, 21 Oct 2017 17:01:55 -0700
+User command: create-repo /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/mypt2 /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_repo
+Source path: /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/mypt2
+Target path: /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_repo
+File Copied Info: 72.1.txt hx.txt /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_repo/mypt2/hx.txt/72.1.txt
+File Copied Info: 4371.8.txt goodbye.txt /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_repo/mypt2/Stuff/goodbye.txt/4371.8.txt
+File Copied Info: 15496.21.txt hello.txt /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_repo/mypt2/Stuff/hello.txt/15496.21.txt
