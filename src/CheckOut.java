@@ -14,18 +14,32 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * Class: CheckOut
+ * 
+ * @author 	Quan: quanlynguyen90@gmail.com
+ * @author 	Marvin: reacxtion@gmail.com
+ * @author Mingtau Li: minijordon@gmail.com
+ * 
+ * @description: check in version of file from repository to target folder
+ */
 
 public class CheckOut extends Repository{
 	private File maniFile;	// manifest file
 	private String rootDirectory;	// parent directory of project
 	private ArrayList<String> filesCopied;	// keeps track of files copied
 	
+	/** public constructor */
 	public CheckOut(String src, String target, File mf) {
 		super(src, target);
 		maniFile = mf;
 		filesCopied = new ArrayList<String>();
 	}
 
+	/**
+	 * This function executes main checkout functionality
+	 * @return Nothing
+	 */
 	@Override
 	public void execute() throws RepoException, IOException {
 		File targetFile = new File(target);	// if target doesn't exist, make one
@@ -56,7 +70,14 @@ public class CheckOut extends Repository{
 		System.out.println("Checkout Successful\n");
 	}
 	
-	//return root directory
+	/**
+	 * This function walks through project tree and looks for root folder
+	 * 
+	 * @param directory
+	 *            Path representation of repo directory
+	 * @return String
+	 * 			  root folder of repository
+	 */
 	public String findRoot(Path directory) throws RepoException {
 			try (DirectoryStream<Path> ds = Files.newDirectoryStream(directory)) {
 				for (Path child : ds) {
@@ -79,7 +100,14 @@ public class CheckOut extends Repository{
 		return null;
 		
 	}
-
+	
+	/**
+	 * This function generates a manifest file 
+	 * 
+	 * @param manifest
+	 *            Manifest file to use
+	 * @return Nothing
+	 */
 	@Override
 	public void generateManifest(File manifest) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(manifest, true));
@@ -100,6 +128,10 @@ public class CheckOut extends Repository{
 		bw.close();
 	}
 	
+	/**
+	 * This extracts directories from manifest
+	 * @return ArrayList of files from manifest
+	 */
 	public ArrayList<File> readManifest(){
 		ArrayList<File> FileList = new ArrayList<File>();
 		try {
@@ -120,7 +152,15 @@ public class CheckOut extends Repository{
 		return FileList; // return list of directories from manifest
 	}
 	
-	 // copies contents from one file to another
+	/**
+	 * This function copies contents from one file to another
+	 * 
+	 * @param source
+	 *            file to copy from
+	 * @param target
+	 *            file to copy to
+	 * @return Nothing
+	 */
 	public void copyFile(File source, File target, String fileName){
 		PrintWriter writer = null;
 		Scanner read = null;
@@ -147,9 +187,16 @@ public class CheckOut extends Repository{
 			filesCopied.add("File Copied Info: " + fileName + " " + source.getName() + " " + target + File.separator + fileName + "\r\n");
 		}
 	}
-	
-	// return nthIndex of substring in select string
-	public  int nthIndexOf(String s, String sub, int n) {
+	/**
+	 * Helper function to get nth Index of substring from string
+	 * 
+	 * @param s
+	 *            original string
+	 * @param target
+	 *            substring
+	 * @return nth index of substring contained in string
+	 */
+	public int nthIndexOf(String s, String sub, int n) {
 		int index = s.indexOf(sub);
 		while (--n > 0 && index != -1)
 			index = s.indexOf(sub, index + 1);
