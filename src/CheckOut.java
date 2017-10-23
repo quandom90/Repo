@@ -17,9 +17,9 @@ import java.util.Scanner;
 /**
  * Class: CheckOut
  * 
- * @author 	Quan: quanlynguyen90@gmail.com
- * @author 	Marvin: reacxtion@gmail.com
- * @author Mingtau Li: minijordon@gmail.com
+ * @author	Quan Nguyen: quanlynguyen90@gmail.com
+ * @author	Marvin Mendez: reacxtion@gmail.com
+ * @author	Mingtau Li: minijordon@gmail.com
  * 
  * @description: check in version of file from repository to target folder
  */
