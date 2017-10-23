@@ -114,9 +114,7 @@ public class CheckOut extends Repository{
 			read.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} 
 		return FileList; // return list of directories from manifest
 	}
 	

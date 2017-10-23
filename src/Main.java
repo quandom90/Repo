@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -14,6 +15,10 @@ import java.util.HashMap;
 import java.util.Scanner;
  
 public class Main {
+	
+	public enum Command {
+		CHECKIN, CREATE, CHECKOUT, EXIT, LABEL,  NO_COMMAND
+	}
 	
 	//	Runs main program
 	//	Accepts user input of a src and target path to execute repo cloning
@@ -82,12 +87,15 @@ public class Main {
 			String command = kb.next();
 			System.out.println("Command: " + command);
 			
-			if(command.equals("exit-menu"))
+			Command cmd = getCommand(command);
+			
+			
+			if(cmd == Command.EXIT)
 			{
 				System.out.println("Exiting menu.");
 				finished = true;
 			}
-			else if(command.equals("label-manifest"))
+			else if(cmd == Command.LABEL)
 			{
 				String manifestDir = kb.next();
 				String label = kb.next();
@@ -96,7 +104,7 @@ public class Main {
 				File manifest = new File(manifestDir);
 				addLabel(manifest, label);
 			}
-			else
+			else 
 			{
 				System.out.print(">");
 				String src = kb.next();
@@ -104,14 +112,14 @@ public class Main {
 				String target = kb.next();
 				kb.nextLine();
 				
-				if(command.equals("create-repo"))
+				if(cmd == Command.CREATE)
 				{
 					Repository rep = new Create(src, target);
 					rep.execute();
 					System.out.println("repo created");
 					
 					//Generate Manifest File
-					String manifestDir = target + File.separator + "manifest.mani";
+					String manifestDir = target + File.separator + "create.mani";
 					File manifest = new File(manifestDir);
 					rep.generateManifest(manifest);
 					
@@ -119,12 +127,20 @@ public class Main {
 					String label = kb.nextLine();
 					addLabel(manifest, label);
 				}
-				else if (command.equals("check-in"))
+				else if (cmd == Command.CHECKIN)
 				{
 					CheckIn checkin = new CheckIn(src, target);
 					checkin.execute();
+					
+					File dir = new File(target);
+					
+					if (dir.isDirectory()){
+						String manifestDir = target + File.separator + createManifestName(cmd, dir);
+						File manifest = new File(manifestDir);
+						checkin.generateManifest(manifest);
+					}
 				}
-				else if (command.equals("check-out"))
+				else if (cmd == Command.CHECKOUT)
 				{
 					File repo = new File(src);
 					
@@ -194,13 +210,60 @@ public class Main {
 								+ "You must provide a manifest file or label to check out from.");
 					}
 				}
-				else {
+				else if (cmd == Command.NO_COMMAND) {
 					System.out.println("Invalid command");
 				}
 			}
 	
 		}
 	}
+	
+	public static Command getCommand(String command){
+		if (command.equals("exit-menu"))
+			return Command.EXIT;
+		else if (command.equals("label-manifest"))
+			return Command.LABEL;
+		else if (command.equals("create-repo"))
+			return Command.CREATE;
+		else if (command.equals("check-in"))
+			return Command.CHECKIN;
+		else if (command.equals("check-out"))
+			return Command.CHECKOUT;
+		else
+			return Command.NO_COMMAND;
+	}
+	
+	public static String createManifestName(Command cmd, File dir){
+		String result;
+		File[] fileList = null;
+		
+		switch (cmd){
+			case CHECKIN:
+				fileList = dir.listFiles(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String name) {
+						return (name.contains(".mani")&&equals(name.contains("create")));
+					}
+				}); 
+				result = "checkin" + (fileList.length + 1) + ".mani";
+				break;
+			case CHECKOUT:
+				fileList = dir.listFiles(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String name) {
+						return (name.contains(".mani")&&equals(name.contains("create")));
+					}
+				}); 
+				result = "checkout" + (fileList.length + 1) + ".mani";
+				break;
+		default:
+			result = "";
+			break;
+		}
+		
+		return result;
+	}
+
 	
 	public static String getManifest(String label, File[] maniList)
 	{

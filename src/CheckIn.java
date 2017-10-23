@@ -82,6 +82,7 @@ public class CheckIn extends Repository{
 					findFiles(f, manifestDir, bw);
 				else if(f.isFile())
 				{
+					
 					String aid = f.getName();
 					String parent = f.getParentFile().getName();
 					String path = f.getPath();
