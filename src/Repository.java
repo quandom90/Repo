@@ -1,16 +1,21 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class Repository {
 	
+	public enum Command {
+		CHECKIN, CREATE, CHECKOUT, EXIT, LABEL,  NO_COMMAND
+	}
+	
 	protected String src;
 	protected String target;
 	protected ArrayList<File> listManifest;
 	/*
-	 * Contructor
+	 * Constructor
 	 * @param src - string path of project to be copied
 	 * @param target - string path of target directory to store copied files from src 
 	 */
@@ -40,6 +45,44 @@ public abstract class Repository {
 	public abstract void execute() throws RepoException, IOException;
 	public abstract void generateManifest(File manifest) throws IOException;
 	
+	/*
+	 * Generates name for most current numbered manifest file
+	 * @param cmd - the command for the repo either check-in or check-out
+	 * @param dirName - the directory string of the repo
+	 * @return - the name of the most current numbered manifest file 
+	 */
+	public String getMostCurrentManiName(Command cmd, String dirName){
+		String result;
+		File[] fileList = null;
+		File dir = new File(dirName);
+		
+		switch (cmd){
+			case CHECKIN:
+				fileList = dir.listFiles(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String name) {
+						return ((name.contains(".mani"))&&(name.contains("checkin")));
+						
+					}
+				}); 
+				result = "checkin" + (fileList.length + 1) + ".mani";
+				break;
+			case CHECKOUT:
+				fileList = dir.listFiles(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String name) {
+						return ((name.endsWith(".mani"))&&(name.contains("checkout")));
+					}
+				}); 
+				result = "checkout" + (fileList.length + 1) + ".mani";
+				break;
+		default:
+			result = "";
+			break;
+		}
+		
+		return result;
+	}
 	
 	/*
 	 * Generates Artifact Code names for files with checksum
