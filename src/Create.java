@@ -33,6 +33,10 @@ public class Create extends Repository{
 			}else{
 				throw new RepoException("Repo already exists!");
 			}
+			
+			String manifestDir = target + File.separator + "create.mani";
+			File mani = new File(manifestDir);
+			generateManifest(mani);
 		}
 	}
 	
@@ -74,6 +78,10 @@ public class Create extends Repository{
 		}
 	}
 
+	/*
+	 * Creates manifest file and populates it with data from create repo
+	 * @param manifest - manifest file to be written into
+	 */
 	@Override
 	public void generateManifest(File manifest) throws IOException {
 		// TODO Auto-generated method stub

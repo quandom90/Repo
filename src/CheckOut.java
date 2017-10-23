@@ -45,11 +45,12 @@ public class CheckOut extends Repository{
 			}
 			
 			// generate numbered manifest
-			int i = 0;
-			while(new File(new File(rootDirectory).getParent() + File.separator +"Checkout"+i+".mani").exists()){
-				i++;
-			}
-			generateManifest(new File(new File(rootDirectory).getParent() + File.separator + "Checkout"+i+".mani"));
+			//int i = 0;
+			//while(new File(new File(rootDirectory).getParent() + File.separator +"Checkout"+i+".mani").exists()){
+				//i++;
+			//}
+			File mani = new File(src + File.separator + getMostCurrentManiName(Command.CHECKOUT, src));
+			generateManifest(mani);
 		} else {
 			throw new RepoException("Please select a valid entry point for checkout (Checkout Folder must be empty)");
 		}

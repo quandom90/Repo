@@ -9,12 +9,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class CheckIn extends Repository{
 
+	private ArrayList<String> upToDateFiles;
+	
 	public CheckIn(String src, String target) {
 		super(src, target);
+		upToDateFiles = new ArrayList<String>();
 	}
+	
 	
 	@Override
 	public void execute() throws RepoException, IOException{
@@ -41,6 +46,9 @@ public class CheckIn extends Repository{
 			}else{
 				throw new RepoException("Repository does not exist!");
 			}
+			
+			File mani = new File(target + File.separator + getMostCurrentManiName(Command.CHECKIN, target));
+			generateManifest(mani);
 		}
 	}
 
@@ -82,17 +90,22 @@ public class CheckIn extends Repository{
 					findFiles(f, manifestDir, bw);
 				else if(f.isFile())
 				{
-					
-					String aid = f.getName();
-					String parent = f.getParentFile().getName();
-					String path = f.getPath();
-					String s = "File Copied Info: " + aid + " " + parent + " " + path + "\r\n";
-					bw.write(s);
+					for (String s : upToDateFiles){
+						if (f.getName().equals(s)){
+							String aid = f.getName();
+							String parent = f.getParentFile().getName();
+							String path = f.getPath();
+							String line = "File Copied Info: " + aid + " " + parent + " " + path + "\r\n";
+							bw.write(line);
+						}
+					}
 				}
+				
 			}
 	}
 	
 	private void createNewFile(File srcFile, String tarDir) throws IOException{
+
 		File newFile = new File(tarDir);
 		InputStream in = new FileInputStream(srcFile);
 		OutputStream out = new FileOutputStream(newFile);
@@ -143,6 +156,7 @@ public class CheckIn extends Repository{
 				}
 				boolean sameFile = false;
 				String artifact = aid(fsrc);
+				upToDateFiles.add(artifact);
 				if (tarDir != null){
 					
 					File[] fileVersions = tarDir.listFiles();
@@ -160,6 +174,7 @@ public class CheckIn extends Repository{
 				}
 				
 				if (!sameFile){
+					
 					createNewFile(fsrc, tarDir + File.separator + artifact);
 				}
 			}
