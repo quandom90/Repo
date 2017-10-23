@@ -1,0 +1,12 @@
+
+
+
+
+Command: check-out
+Time repo checked out: Sun, 22 Oct 2017 20:49:14 -0700
+User command: check-out /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_repo /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_co
+Source path: /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_repo
+Target path: /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_co
+File Copied Info: hx.txt 72.1.txt /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_co/hx.txt
+File Copied Info: goodbye.txt 4371.8.txt /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_co/Stuff/goodbye.txt
+File Copied Info: hello.txt 15496.21.txt /Users/Reacxtion/Documents/CSULB/CECS543/Projects/Project2/Repo/test_co/Stuff/hello.txt
