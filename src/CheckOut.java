@@ -35,6 +35,7 @@ public class CheckOut extends Repository{
 		if(targetFile.isDirectory() && targetFile.list().length == 0){ // if target entered is directory and is empty
 			ArrayList<File> sourceDirectories = readManifest();	// grab source directories from manifest
 			rootDirectory = findRoot(Paths.get(src));	// get root directory from source
+			System.out.println("Root directory: " + rootDirectory);
 			
 			for(File s: sourceDirectories) {
 				//copy files here
@@ -45,11 +46,8 @@ public class CheckOut extends Repository{
 			}
 			
 			// generate numbered manifest
-			int i = 0;
-			while(new File(new File(rootDirectory).getParent() + File.separator +"Checkout"+i+".mani").exists()){
-				i++;
-			}
-			generateManifest(new File(new File(rootDirectory).getParent() + File.separator + "Checkout"+i+".mani"));
+			File mani = new File(src + File.separator + getMostCurrentManiName(Command.CHECKOUT, src));
+			generateManifest(mani);
 		} else {
 			throw new RepoException("Please select a valid entry point for checkout (Checkout Folder must be empty)");
 		}
@@ -64,7 +62,7 @@ public class CheckOut extends Repository{
 							File fileList[] = directory.toFile().listFiles();
 							for(File f : fileList) {
 								if(f.toString().contains(".mani")) { // if files in the directory contains manifest files, root is found
-									return child.toString();
+									return child.getParent().toString();
 								}
 							}
 							findRoot(child);
@@ -114,9 +112,7 @@ public class CheckOut extends Repository{
 			read.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} 
 		return FileList; // return list of directories from manifest
 	}
 	

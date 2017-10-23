@@ -23,9 +23,7 @@ public class Create extends Repository{
 	public void execute() throws RepoException, IOException{
 		if ((target != "")&&(src != "")){
 			File rootSrc = new File(src);
-			System.out.println("source::"+src); //delete me
 			String rootRep = target + File.separator + rootSrc.getName();
-			System.out.println("Rootrep::"+rootRep); //delete me
 			File rep = new File(rootRep);
 			
 			if (rep.mkdir()){
@@ -33,6 +31,12 @@ public class Create extends Repository{
 			}else{
 				throw new RepoException("Repo already exists!");
 			}
+			
+			/*
+			String manifestDir = target + File.separator + "create.mani";
+			File mani = new File(manifestDir);
+			generateManifest(mani);
+			*/
 		}
 	}
 	
@@ -74,6 +78,10 @@ public class Create extends Repository{
 		}
 	}
 
+	/*
+	 * Creates manifest file and populates it with data from create repo
+	 * @param manifest - manifest file to be written into
+	 */
 	@Override
 	public void generateManifest(File manifest) throws IOException {
 		// TODO Auto-generated method stub

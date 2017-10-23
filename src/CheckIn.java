@@ -9,12 +9,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class CheckIn extends Repository{
 
+	private ArrayList<String> upToDateFiles;
+	
 	public CheckIn(String src, String target) {
 		super(src, target);
+		upToDateFiles = new ArrayList<String>();
 	}
+	
 	
 	@Override
 	public void execute() throws RepoException, IOException{
@@ -23,24 +28,9 @@ public class CheckIn extends Repository{
 			File srcFile = new File(src);
 			File[] repoFiles = repo.listFiles();
 			
-			File rootRepo = null;
-			if (repoFiles.length != 0){
-				for (File f : repoFiles ){
-					if (f.getName().equals(srcFile.getName())){
-						rootRepo = f;
-						break;
-					}
-				}
-				
-				if (rootRepo != null){
-					checkRepo(src, rootRepo.getAbsolutePath());
-				}else{
-					throw new RepoException("Repository does not exist!");
-				}
-				
-			}else{
-				throw new RepoException("Repository does not exist!");
-			}
+			checkRepo(src, target);
+			File mani = new File(target + File.separator + getMostCurrentManiName(Command.CHECKIN, target));
+			generateManifest(mani);
 		}
 	}
 
@@ -58,8 +48,7 @@ public class CheckIn extends Repository{
 		bw.write("Target path: " + target + "\r\n");
 		
 		File srcFile = new File(src);
-		File dir = new File(target + File.separator + srcFile.getName());	
-		findFiles(dir, manifest.getAbsolutePath(), bw);
+		findFiles(srcFile, manifest.getAbsolutePath(), bw);
 		bw.close();
 		listManifest.add(manifest);
 		
@@ -82,16 +71,22 @@ public class CheckIn extends Repository{
 					findFiles(f, manifestDir, bw);
 				else if(f.isFile())
 				{
-					String aid = f.getName();
-					String parent = f.getParentFile().getName();
-					String path = f.getPath();
-					String s = "File Copied Info: " + aid + " " + parent + " " + path + "\r\n";
-					bw.write(s);
+					for (String s : upToDateFiles){
+						if (f.getName().equals(s)){
+							String aid = f.getName();
+							String parent = f.getParentFile().getName();
+							String path = f.getPath();
+							String line = "File Copied Info: " + aid + " " + parent + " " + path + "\r\n";
+							bw.write(line);
+						}
+					}
 				}
+				
 			}
 	}
 	
 	private void createNewFile(File srcFile, String tarDir) throws IOException{
+
 		File newFile = new File(tarDir);
 		InputStream in = new FileInputStream(srcFile);
 		OutputStream out = new FileOutputStream(newFile);
@@ -142,6 +137,7 @@ public class CheckIn extends Repository{
 				}
 				boolean sameFile = false;
 				String artifact = aid(fsrc);
+				upToDateFiles.add(artifact);
 				if (tarDir != null){
 					
 					File[] fileVersions = tarDir.listFiles();
@@ -159,6 +155,7 @@ public class CheckIn extends Repository{
 				}
 				
 				if (!sameFile){
+					
 					createNewFile(fsrc, tarDir + File.separator + artifact);
 				}
 			}
