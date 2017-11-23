@@ -1,0 +1,12 @@
+
+
+
+
+Command: check-in
+Time of check-in: Wed, 22 Nov 2017 06:30:22 -0800
+User command: check-in E:\Repo\SCM2\mypt E:\Repo\SCM2\test
+Source path: E:\Repo\SCM2\mypt
+Target path: E:\Repo\SCM2\test
+File Copied Info: 9888.21.txt goodbye.txt E:\Repo\SCM2\test\mypt\goodbye.txt\9888.21.txt
+File Copied Info: 18785.28.txt hello.txt E:\Repo\SCM2\test\mypt\hello.txt\18785.28.txt
+File Copied Info: 387.2.txt hx.txt E:\Repo\SCM2\test\mypt\hx.txt\387.2.txt

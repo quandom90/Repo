@@ -1,0 +1,12 @@
+
+
+
+
+Command: check-out
+Time repo checked out: Wed, 22 Nov 2017 06:35:31 -0800
+User command: check-out E:\Repo\SCM2\test E:\Repo\SCM2\test_co
+Source path: E:\Repo\SCM2\test
+Target path: E:\Repo\SCM2\test_co
+File Copied Info: goodbye.txt E:\Repo\SCM2\test\mypt\goodbye.txt\5142.13.txt E:\Repo\SCM2\test_co\mypt\goodbye.txt
+File Copied Info: hello.txt E:\Repo\SCM2\test\mypt\hello.txt\18785.28.txt E:\Repo\SCM2\test_co\mypt\hello.txt
+File Copied Info: hx.txt E:\Repo\SCM2\test\mypt\hx.txt\387.2.txt E:\Repo\SCM2\test_co\mypt\hx.txt

@@ -3,7 +3,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public abstract class Repository {
 	
@@ -13,15 +19,19 @@ public abstract class Repository {
 	
 	protected String src;
 	protected String target;
+	protected String rootDirectory; // parent directory of project
 	protected ArrayList<File> listManifest;
+	protected ArrayList<String> filesCopied;	// keeps track of files copied
 	/*
 	 * Constructor
 	 * @param src - string path of project to be copied
-	 * @param target - string path of target directory to store copied files from src 
+	 * @param target - string path of target directory to sto
+	 * return copied files from src 
 	 */
 	public Repository(String src, String target){
 		this.src = src;
 		this.target = target;
+		filesCopied = new ArrayList<String>();
 		File root = new File(src);
 		File[] possibleManifest = root.listFiles();
 		
@@ -124,9 +134,120 @@ public abstract class Repository {
 			e.printStackTrace();
 			return "";
 		}
-	
 		
 	}
 	
+	/**
+	 * This extracts directories from manifest
+	 * @return ArrayList of files from manifest
+	 */
+	public ArrayList<File> readManifest(File maniFile){
+		ArrayList<File> FileList = new ArrayList<File>();
+		try {
+			Scanner read = new Scanner(maniFile);
+			while(read.hasNext()){ 
+				String line = read.nextLine(); //read labels line by line
+
+				if(line.contains("File Copied Info:")){	
+					String s;
+					if (maniFile.getName().contains("checkout")){
+						s = line.substring(nthIndexOf(line, " ", 4), nthIndexOf(line, " ", 5) + 1);
+					}else{
+						s = line.substring(nthIndexOf(line," ",5), line.length()).trim();
+					}
+					
+					FileList.add(new File(s));
+				}
+			}
+			read.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} 
+		return FileList; // return list of directories from manifest
+	}
+	
+	/**
+	 * This function walks through project tree and looks for root folder
+	 * 
+	 * @param directory
+	 *            Path representation of repo directory
+	 * @return String
+	 * 			  root folder of repository
+	 */
+	public String findRoot(Path directory) throws RepoException {
+			try (DirectoryStream<Path> ds = Files.newDirectoryStream(directory)) {
+				for (Path child : ds) {
+						if (Files.isDirectory(child)) {
+							File fileList[] = directory.toFile().listFiles();
+							for(File f : fileList) {
+								if(f.toString().contains(".mani")) { // if files in the directory contains manifest files, root is found
+									return child.getParent().toString();
+								}
+							}
+							findRoot(child);
+						}
+					}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				System.out.println("Error walking through directories");
+			}
+			if (rootDirectory == null) throw new RepoException("Not a repository");
+		return null;
+		
+	}
+	
+	/**
+	 * This function copies contents from one file to another
+	 * 
+	 * @param source
+	 *            file to copy from
+	 * @param target
+	 *            file to copy to
+	 * @return Nothing
+	 */
+	public void copyFile(File source, File target, String fileName){
+		PrintWriter writer = null;
+		Scanner read = null;
+		try {
+			read = new Scanner(source);
+			if(!target.exists()){
+				target.mkdirs();
+			}
+			writer = new PrintWriter(target + File.separator + fileName);
+			do {
+				String line = read.nextLine();
+				writer.println(line);
+			} while (read.hasNext());
+
+		} catch (FileNotFoundException e) {
+			System.out.println("Write Error: File not found");
+		} catch (NoSuchElementException e) {
+			System.out.println("Warning: file at "+ target.getName() + " is empty");
+		} catch (Exception e) {
+			System.out.println("Error writing to file: " + e);
+		}finally {
+			read.close();
+			writer.close();
+			filesCopied.add("File Copied Info: " + fileName + " " + source.getAbsolutePath() + " " + target + File.separator + fileName + "\r\n");
+		}
+	}
+	
+	
+	/**
+	 * Helper function to get nth Index of substring from string
+	 * 
+	 * @param s
+	 *            original string
+	 * @param target
+	 *            substring
+	 * @return nth index of substring contained in string
+	 */
+	public int nthIndexOf(String s, String sub, int n) {
+		int index = s.indexOf(sub);
+		while (--n > 0 && index != -1)
+			index = s.indexOf(sub, index + 1);
+		return index;
+	}
 	
 }
