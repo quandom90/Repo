@@ -89,14 +89,17 @@ public class Main {
 		while(!finished)
 		{
 			System.out.println("\nRepository Commands\n");
-			System.out.println("1. create-repo [source folder] [target folder]");
-			System.out.println("2. check-in [source folder] [target folder]");
-			System.out.println("3. check-out [source folder] [target folder]");
-			System.out.println("4. label-manifest [manifest file] [label]");
-			System.out.println("5. exit-menu");
-			System.out.println("Enter the command and arguments you would like to perform:");
+			System.out.println("create-repo [source folder] [target folder]");
+			System.out.println("check-in [source folder] [target folder]");
+			System.out.println("check-out [source folder] [target folder]");
+			System.out.println("label-manifest [manifest file] [label]");
+			System.out.println("merge");
+			System.out.println("exit-menu");
+			System.out.println("\nEnter the command and arguments you would like to perform:\n");
+			System.out.print(">");
 			String command = kb.next();
-			
+
+
 			if(command.equals("exit-menu"))
 			{
 				System.out.println("Exiting menu.");
@@ -113,14 +116,20 @@ public class Main {
 			}
 			else
 			{
+				System.out.println("  Enter source:");
 				System.out.print(">");
 				String src = kb.next();
-				System.out.print("\n>");
+				src = src.replace("\"", "");
+				System.out.println("  Enter target:");
+				System.out.print(">");
 				String target = kb.next();
+				target = target.replace("\"", "");
 				kb.nextLine();
+
+
 				
-				if(command.equals("create-repo"))
-				{
+switch(command){
+	case "create-repo":
 					Repository rep = new Create(src, target);
 					rep.execute();
 					System.out.println("repo created");
@@ -133,14 +142,12 @@ public class Main {
 					System.out.println("Enter label: ");
 					String label = kb.nextLine();
 					addLabel(manifest, label);
-				}
-				else if (command.equals("check-in"))
-				{
+	break;
+	case "check-in":
 					CheckIn checkin = new CheckIn(src, target);
 					checkin.execute();
-				}
-				else if (command.equals("check-out"))
-				{
+	break;
+	case "check-out":
 					File repo = new File(src);
 					
 					File[] maniFileList = repo.listFiles(new FileFilter() {
@@ -188,24 +195,24 @@ public class Main {
 								System.out.println("Label not found.");
 							else
 							{
-								File manifest = new File(src + File.separator + maniName);
-								CheckOut checkout = new CheckOut(src, target, manifest);
+								File mani = new File(src + File.separator + maniName);
+								CheckOut checkout = new CheckOut(src, target, mani);
 								checkout.execute();
 							}
 						}
 					}
 					else
-					{
+					{ // else if input is empty
 						System.out.println("No manifest specified.\n"
 								+ "You must provide a manifest file or label to check out from.");
 					}
-				}
-				else {
-					System.out.println("Invalid command");
-				}
+				break;
+		default://default case
+				System.out.println("Invalid command");
 			}
-	
-		}
+
+			}
+		}//end else if not exit
 	}
 	
 	public static String getManifest(String label, File[] maniList)
