@@ -30,7 +30,7 @@ public class Merge extends Repository
 			if (manifestTarget != null){
 				mergeWithManifest();
 			}else{
-				
+				mergeWithPath();
 			}
 		}else{
 			throw new RepoException("Target and/or source path not specified");
@@ -49,15 +49,14 @@ public class Merge extends Repository
 		ArrayList<File> srcList = readManifest(manifestRepo);
 		ArrayList<File> targetList = readManifest(manifestTarget);
 		
-	
 		for (File fSrc  : srcList){
 			boolean newFile = true;
 		
 			for (File fTar : targetList){
 				String realSrc = fSrc.getParent();
 				String realTarget = fTar.getParent();
-				String rootSrc = findRootFromChild(new File(realSrc));
-				String rootTarget = findRootFromChild(new File(realTarget));
+				String rootSrc = findRootOrProjectName(new File(realSrc), true);
+				String rootTarget = findRootOrProjectName(new File(realTarget), true);
 				
 				String relativeSrc = realSrc.replace(rootSrc, "");
 				String relativeTarget = realTarget.replace(rootTarget, "");
@@ -114,10 +113,59 @@ public class Merge extends Repository
 	 * Call if user input source with manifest and file path of target only
 	 */
 	private void mergeWithPath(){
+		ArrayList<File> repoMani = readManifest(manifestRepo);
 		
+		for (File fSrc : repoMani){
+			String projectFile = findRootOrProjectName(fSrc, false);
+			File project = new File(projectFile);
+			File real = fSrc.getParentFile();
+			
+			if (!target.contains(project.getName())){
+				target += (File.separator + project.getName());
+			}
+			
+			String targetPath = real.getAbsolutePath().replace(project.getAbsolutePath(), target);
+			
+			File fileToCheck = new File(targetPath);
+			
+			if (fileToCheck.exists()){
+				if (fileToCheck.isFile()){
+					String fileAID = aid(fileToCheck);
+					
+					if (!fSrc.getName().equals(fileAID)){
+						//Handle Conflict!!!
+					}
+				}
+			}else{
+				checkFolderExist(target, targetPath);
+				copyFile(fSrc, fileToCheck.getParentFile(), fileToCheck.getName());
+			}
+				
+		}	
 	}
 	
-	public String findRootFromChild(File child){
+	public void checkFolderExist(String current, String file){
+		if (file.contains(current)){
+			String relative = file.replace(current, "");
+			String folder = "";
+			for (char c : relative.toCharArray()){
+				if (c == '\\'){
+					String folderPath = current + File.separator + folder;
+					File check = new File(folderPath);
+				
+					if (!check.exists()){
+						check.mkdir();
+					}			
+					checkFolderExist(folderPath, file);
+					break;
+				}else{
+					folder += c;
+				}
+			}
+		}
+	}
+	
+	public String findRootOrProjectName(File child, boolean findRoot){
 		File parent = child.getParentFile();
 		String result = "";
 		File[] maniFileList = parent.listFiles(new FileFilter() {
@@ -128,9 +176,12 @@ public class Merge extends Repository
 		});
 		
 		if (maniFileList.length == 0){
-			result = findRootFromChild(parent);
+			result = findRootOrProjectName(parent, findRoot);
 		}else{
-			return parent.getAbsolutePath();
+			if (findRoot)
+				return parent.getAbsolutePath();
+			else
+				return child.getAbsolutePath();
 		}
 		
 		return result;

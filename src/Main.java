@@ -126,10 +126,12 @@ public class Main {
 				//Call merge with option 1
 				File rMani = new File("E:\\Repo\\SCM2\\test\\checkin3.mani");
 				File tMani = new File("E:\\Repo\\SCM2\\test\\checkin4.mani");
-				Merge merge = new Merge("E:\\Repo\\SCM2\\test", "E:\\Repo\\SCM2\\test_co\\mypt", rMani, tMani);
-				merge.execute();
+				Merge merge1 = new Merge("E:\\Repo\\SCM2\\test", "E:\\Repo\\SCM2\\test_co\\mypt", rMani, tMani);
+				merge1.execute();
 				
-				//TODO : implement merge with option 2
+				//Call merge with option 2
+				Merge merge2 = new Merge("E:\\Repo\\SCM2\\test", "E:\\Repo\\SCM2\\test_co\\mypt", rMani);
+				merge2.execute();
 			}
 			//End
 			else
