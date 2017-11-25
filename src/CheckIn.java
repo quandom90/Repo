@@ -24,11 +24,22 @@ public class CheckIn extends Repository{
 	@Override
 	public void execute() throws RepoException, IOException{
 		if ((target != "")&&(src != "")){
-			File repo = new File(target);
-			File srcFile = new File(src);
-			File[] repoFiles = repo.listFiles();
+			File repoRoot = new File(target);
+			File srcRoot = new File(src);
 			
-			checkRepo(src, target);
+			boolean rootFound = false;
+			for (File f : repoRoot.listFiles()){
+				if (f.getName().equals(srcRoot.getName())){
+					checkRepo(src, f.getAbsolutePath());
+					rootFound = true;
+					break;
+				}
+			}
+			
+			if (!rootFound){
+				throw new RepoException("Root folder does not exist");
+			}
+		
 			File mani = new File(target + File.separator + getMostCurrentManiName(Command.CHECKIN, target));
 			generateManifest(mani);
 		}
@@ -47,8 +58,8 @@ public class CheckIn extends Repository{
 		bw.write("Source path: " + src + "\r\n");
 		bw.write("Target path: " + target + "\r\n");
 		
-		File srcFile = new File(src);
-		findFiles(srcFile, manifest.getAbsolutePath(), bw);
+		File srcFile = new File(target);
+		findFiles(srcFile, bw);
 		bw.close();
 		listManifest.add(manifest);
 		
@@ -56,7 +67,7 @@ public class CheckIn extends Repository{
 	
 //	Recursively travel through the directory
 	//	to write info for each file copied into the manifest file.
-	private void findFiles(File dir, String manifestDir, BufferedWriter bw) throws IOException{
+	private void findFiles(File dir, BufferedWriter bw) throws IOException{
 			//Get list of files in directory ignoring the .DS_Store file
 			File[] fileList = dir.listFiles(new FilenameFilter() {
 				@Override
@@ -68,7 +79,7 @@ public class CheckIn extends Repository{
 			for(File f: fileList)
 			{
 				if(f.isDirectory())
-					findFiles(f, manifestDir, bw);
+					findFiles(f, bw);
 				else if(f.isFile())
 				{
 					for (String s : upToDateFiles){

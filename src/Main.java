@@ -93,10 +93,11 @@ public class Main {
 			System.out.println("check-in [source folder] [target folder]");
 			System.out.println("check-out [source folder] [target folder]");
 			System.out.println("label-manifest [manifest file] [label]");
-			System.out.println("merge");
+			System.out.println("merge [source folder] [target folder]");
 			System.out.println("exit-menu");
 			System.out.println("\nEnter the command and arguments you would like to perform:\n");
 			System.out.print(">");
+
 			String command = kb.next();
 
 
@@ -114,6 +115,28 @@ public class Main {
 				File manifest = new File(manifestDir);
 				addLabel(manifest, label);
 			}
+			//Testing Merge
+			//Begin
+			else if (command.equals("merge")){
+				/*
+				 * Two ways to call Merge:
+				 * 1. By inputing a manifest file for both repo and project tree, assume
+				 *    the manifest file is the lastest checkin from project tree.
+				 * 2. By inputing a manifest file for the repo and the file path of the 
+				 *    project tree.
+				 */
+				
+				//Call merge with option 1
+				File rMani = new File("E:\\Repo\\SCM2\\test\\checkin3.mani");
+				File tMani = new File("E:\\Repo\\SCM2\\test\\checkin4.mani");
+				Merge merge1 = new Merge("E:\\Repo\\SCM2\\test", "E:\\Repo\\SCM2\\test_co\\mypt", rMani, tMani);
+				merge1.execute();
+				
+				//Call merge with option 2
+				Merge merge2 = new Merge("E:\\Repo\\SCM2\\test", "E:\\Repo\\SCM2\\test_co\\mypt", rMani);
+				merge2.execute();
+			}
+			//End
 			else
 			{
 				System.out.println("  Enter source:");
@@ -223,6 +246,8 @@ switch(command){
 			try {
 				read = new Scanner(mani);
 				int lineCount = 0;
+				
+				
 				while(read.hasNextLine() && lineCount < 4)
 				{
 					if(read.nextLine().equals(label))
