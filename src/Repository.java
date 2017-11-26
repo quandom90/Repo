@@ -1,6 +1,9 @@
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -128,5 +131,181 @@ public abstract class Repository {
 		
 	}
 	
+	public File getGrandfather(File repo, String rMani, String tMani) throws IOException
+	{
+		String grandfather = "Grandfather not found.";
+		
+		ArrayList<Node> nodes = getManifestData(repo);
+		Node rNode = null;
+		Node tNode = null;
+		for (Node node: nodes)
+		{
+			if (node.data.getName().equals(rMani))
+			{
+				rNode = node;
+			}
+			if (node.data.getName().equals(tMani))
+			{
+				tNode = node;
+			}
+		}
+		
+		ArrayList<String> rToRoot = findPathToRoot(rNode, nodes);
+		ArrayList<String> tToRoot = findPathToRoot(tNode, nodes);
+		
+		ArrayList<String> intersection = new ArrayList<String>(rToRoot);
+		intersection.retainAll(tToRoot);
+		
+		grandfather = intersection.get(0);
+		
+		File grandMani = null;
+		for (Node node: nodes)
+		{
+			if(node.name.equals(grandfather))
+			{
+				grandMani = node.data;
+			}
+		}
+		
+		return grandMani;
+	}
 	
+	public class Node
+	{
+		String name;
+		File data;
+		String parent;
+		ArrayList<Node> children = new ArrayList<Node>();
+		
+		public Node(String name, File data, String parent)
+		{
+			this.name = name;
+			this.data = data;
+			this.parent = parent;
+		}
+		
+		public void addChild(Node child)
+		{
+			children.add(child);
+		}
+	}
+	
+	public ArrayList<String> findPathToRoot(Node startNode, ArrayList<Node> nodes)
+	{
+		ArrayList<String> nodeToRoot = new ArrayList<String>();
+		nodeToRoot.add(startNode.name);
+		Node current = startNode;
+		while(!current.name.equals("root"))
+		{
+			String parentName = current.parent;
+			nodeToRoot.add(parentName);
+			for (Node node: nodes)
+			{
+				if (node.name.equals(parentName))
+				{
+					current = node;
+				}
+			}
+		}
+		
+		return nodeToRoot;
+	}
+	
+	public ArrayList<Node> getManifestData(File repo) throws IOException
+	{
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		
+		File createMani = new File(repo.getAbsolutePath()+File.separator+"create.mani");
+		Node root = new Node("root", createMani, null);
+		nodes.add(root);
+		
+		File[] coManiFiles = repo.listFiles(new FilenameFilter() {
+			public boolean accept(File repo, String name) {
+				return name.matches("checkout\\d+.mani");
+			}
+		});
+		
+		File[] ciManiFiles = repo.listFiles(new FilenameFilter() {
+			public boolean accept(File repo, String name) {
+				return name.matches("checkin\\d+.mani");
+			}
+		});
+		
+		String parent = "";
+		String child = "";
+		
+		for (File coManiFile: coManiFiles)
+		{
+			BufferedReader brco = new BufferedReader(new FileReader(coManiFile));
+			
+			//	Skip first eight lines to get to child
+			for (int i=0; i<8; i++) 
+			{ 
+				brco.readLine(); 
+			}
+			child = brco.readLine().split("\\s+")[2];
+			String nodeName = new File(child).getName();
+			String maniName = brco.readLine().split("\\s+")[1];
+			
+			if (maniName.equals("create.mani"))
+			{
+				for (File file: ciManiFiles)
+				{
+					BufferedReader br = new BufferedReader(new FileReader(file));
+					//	Skip first seven lines to get to parent
+					for (int i=0; i<7; i++) 
+					{ 
+						br.readLine(); 
+					}
+					String filename = new File(br.readLine().split("\\s+")[2]).getName();
+					if(filename.equals(nodeName))
+					{
+						Node node = new Node(nodeName, file, "root");
+						nodes.add(node);
+					}
+					
+					br.close();
+				}
+			}
+			
+			for (File ciManiFile: ciManiFiles)
+			{	
+				if(ciManiFile.getName().equals(maniName))
+				{
+					BufferedReader brci = new BufferedReader(new FileReader(ciManiFile));
+					
+					//	Skip first seven lines to get to parent
+					for (int i=0; i<7; i++) 
+					{ 
+						brci.readLine(); 
+					}
+					parent = brci.readLine().split("\\s+")[2];
+					String parentName = new File(parent).getName();
+					for (File file: ciManiFiles)
+					{
+						BufferedReader br = new BufferedReader(new FileReader(file));
+						//	Skip first seven lines to get to parent
+						for (int i=0; i<7; i++) 
+						{ 
+							br.readLine(); 
+						}
+						String filename = new File(br.readLine().split("\\s+")[2]).getName();
+						if(filename.equals(nodeName))
+						{
+							Node node = new Node(nodeName, file, parentName);
+							nodes.add(node);
+						}
+						
+						br.close();
+					}
+					
+					brci.close();
+				}
+			}
+			
+			brco.close();
+		}
+		
+		return nodes;
+	}
 }

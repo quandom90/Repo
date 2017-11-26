@@ -1,3 +1,4 @@
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,26 +10,24 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CheckIn extends Repository{
-
-	private ArrayList<String> upToDateFiles;
+	
+	private HashMap<String, String> upToDateFiles; 
 	
 	public CheckIn(String src, String target) {
 		super(src, target);
-		upToDateFiles = new ArrayList<String>();
+		upToDateFiles = new HashMap<String, String>();
 	}
 	
 	
 	@Override
 	public void execute() throws RepoException, IOException{
 		if ((target != "")&&(src != "")){
-			File repo = new File(target);
-			File srcFile = new File(src);
-			File[] repoFiles = repo.listFiles();
 			
 			checkRepo(src, target);
+			
 			File mani = new File(target + File.separator + getMostCurrentManiName(Command.CHECKIN, target));
 			generateManifest(mani);
 		}
@@ -47,8 +46,9 @@ public class CheckIn extends Repository{
 		bw.write("Source path: " + src + "\r\n");
 		bw.write("Target path: " + target + "\r\n");
 		
-		File srcFile = new File(src);
-		findFiles(srcFile, manifest.getAbsolutePath(), bw);
+		File targetFile = new File(target);
+		findFiles(targetFile, manifest.getAbsolutePath(), bw);
+		
 		bw.close();
 		listManifest.add(manifest);
 		
@@ -71,14 +71,15 @@ public class CheckIn extends Repository{
 					findFiles(f, manifestDir, bw);
 				else if(f.isFile())
 				{
-					for (String s : upToDateFiles){
-						if (f.getName().equals(s)){
+					for (String uAID: upToDateFiles.values()) {
+						if (f.getName().equals(uAID)){
 							String aid = f.getName();
 							String parent = f.getParentFile().getName();
 							String path = f.getPath();
 							String line = "File Copied Info: " + aid + " " + parent + " " + path + "\r\n";
 							bw.write(line);
 						}
+						
 					}
 				}
 				
@@ -106,8 +107,20 @@ public class CheckIn extends Repository{
 		File dir = new File(srcCurrent);
 		File tar = new File(targetCurrent);
 		
-		File[] listFile = dir.listFiles();
-		File[] tarList  = tar.listFiles();
+		File[] listFile = dir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return !name.equals(".DS_Store");
+			}
+		});
+		
+		File[] tarList  = tar.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return !name.equals(".DS_Store");
+			}
+		});
+		
 		for (File fsrc : listFile){
 			if (fsrc.isDirectory()){
 				 String targetPath = "";
@@ -119,6 +132,7 @@ public class CheckIn extends Repository{
 				 }
 				 
 				 if (targetPath != ""){
+					 //System.out.println("FSRC: "+fsrc.getAbsolutePath()+" , targetPath: "+targetPath);
 					 checkRepo(fsrc.getAbsolutePath(), targetPath);
 				 }else{
 					 targetPath = targetCurrent + File.separator + fsrc.getName();
@@ -135,12 +149,19 @@ public class CheckIn extends Repository{
 						}
 					}
 				}
+				
 				boolean sameFile = false;
 				String artifact = aid(fsrc);
-				upToDateFiles.add(artifact);
+				upToDateFiles.put(fsrc.getName(), artifact);
+				
 				if (tarDir != null){
 					
-					File[] fileVersions = tarDir.listFiles();
+					File[] fileVersions = tarDir.listFiles(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return !name.equals(".DS_Store");
+						}
+					});
 					
 					for (File ftar : fileVersions){
 						if (ftar.getName().equals(artifact)){

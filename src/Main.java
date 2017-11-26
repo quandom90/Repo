@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,15 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-/**
- * Class: Main
- * 
- * @author	Quan Nguyen: quanlynguyen90@gmail.com
- * @author	Marvin Mendez: reacxtion@gmail.com
- * @author	Mingtau Li: minijordon@gmail.com
- * 
- * @description: main program
- */
+ 
 public class Main {
 	
 	//	Runs main program
@@ -34,15 +27,6 @@ public class Main {
 		
 	}
 	
-	/**
-	 * This function adds a label to select manifest
-	 * 
-	 * @param manifest
-	 *            manifest file to label
-	 * @param label
-	 *            label name
-	 * @return Nothing
-	 */
 	public static void addLabel(File manifest, String label) throws IOException, RepoException{
 		
 		BufferedReader br = new BufferedReader(new FileReader(manifest));
@@ -76,10 +60,6 @@ public class Main {
 		bw.close();
 	}
 	
-	/**
-	 * This function asks user for input and executes commands accordingly
-	 * @return Nothing
-	 */
 	public static void repoMenu() throws RepoException, IOException
 	{
 		@SuppressWarnings("resource")
