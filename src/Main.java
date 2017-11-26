@@ -7,8 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Class: Main
@@ -91,6 +89,10 @@ public class Main {
 		boolean finished = false;
 
 		while (!finished) {
+			
+			String command = null;
+			String[] tokens = null;
+			while(true){
 			System.out.println("\nRepository Commands\n");
 			System.out.println("create-repo [source folder] [target folder]");
 			System.out.println("check-in [source folder] [target folder]");
@@ -100,12 +102,17 @@ public class Main {
 			System.out.println("exit-menu");
 			System.out.println("\nEnter the command and arguments you would like to perform:\n");
 			System.out.print(">");
-
-			String cmd = kb.nextLine();
-			//allows users to type in command with arguments in one single go
-			//splits by spaces and quotes and then takes away quotes
-			String[] tokens = cmd.split("\"?( |$)(?=(([^\"]*\"){2})*[^\"]*$)\"?");		
-			String command = tokens[0].trim();
+				String cmd = kb.nextLine();
+				//allows users to type in command with arguments in one single go
+				//splits by spaces and quotes and then takes away quotes
+				tokens = cmd.split("\"?( |$)(?=(([^\"]*\"){2})*[^\"]*$)\"?");		
+				command = tokens[0].trim();
+				if(tokens.length > 3){
+					System.out.println("Invalid arguments. Consider enclosing directories in quotes");
+				}else{
+					break;
+				}
+			}
 
 			if (command.equals("exit-menu")) {
 				System.out.println("Exiting menu.\n\nProgram Exiting...\nGoodbye");
@@ -113,7 +120,7 @@ public class Main {
 			} else if (command.equals("label-manifest")) {
 				String manifestDir = null;
 				String label = null;
-				if(tokens.length < 2){
+				if(tokens.length < 3){
 					System.out.println("Enter manifest directory + filename:");
 					System.out.print(">");
 					manifestDir = kb.nextLine();
@@ -122,8 +129,8 @@ public class Main {
 					label = kb.nextLine();
 				}else {
 					try{
-					manifestDir = tokens[1].trim();
-					label = tokens[2].trim();
+						manifestDir = tokens[1].trim();
+						label = tokens[2].trim();
 					}catch(Exception e){
 						e.printStackTrace();
 					}
@@ -135,7 +142,7 @@ public class Main {
 			else {
 				String src = null;
 				String target = null;
-				if(tokens.length < 2){
+				if(tokens.length < 3){
 					System.out.println("  Enter source:");
 					System.out.print(">");
 					src = kb.nextLine();
@@ -217,9 +224,7 @@ public class Main {
 								.println("No manifest specified.\n"
 										+ "You must provide a manifest file or label to check out from.");
 					}
-					break;
-					// Testing Merge
-					// Begin
+						break;
 					case "merge":
 						/*
 						 * Two ways to call Merge: 
@@ -238,18 +243,24 @@ public class Main {
 						
 						
 						// Determine if input is mainfest file or label
-						// and retrieve manifest file if label										
+						// and retrieve manifest file if label	
 						File rMani = getFileFromManiOrLabel(src,target, mergeMani1);
 						File tMani = getFileFromManiOrLabel(src,target, mergeMani2);
-						Merge merge1 = new Merge(src,target, rMani, tMani);
-						merge1.execute();
+						// Call merge with option 1
+						if(rMani != null && tMani != null){
+							try{
+							Merge merge1 = new Merge(src,target, rMani, tMani);
+							merge1.execute();
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+						}
 
-						// Call merge with option 2
+// Call merge with option 2
 //Option 2 commented out for now. Uncomment to use
 //						Merge merge2 = new Merge(src,target, rMani);
 //						merge2.execute();
 						break;
-
 				default:// default case
 					System.out.println("Invalid command");
 				}
