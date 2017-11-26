@@ -1,30 +1,19 @@
-
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 
 public class CheckOut extends Repository{
 	private File maniFile;	// manifest file
-	private String rootDirectory;	// parent directory of project
-	private ArrayList<String> filesCopied;	// keeps track of files copied
 	
 	public CheckOut(String src, String target, File mf) {
 		super(src, target);
 		maniFile = mf;
-		filesCopied = new ArrayList<String>();
 	}
 
 	@Override
@@ -34,7 +23,7 @@ public class CheckOut extends Repository{
 			targetFile.mkdirs();
 		}
 		if(targetFile.isDirectory() && targetFile.list().length == 0){ // if target entered is directory and is empty
-			ArrayList<File> sourceDirectories = readManifest();	// grab source directories from manifest
+			ArrayList<File> sourceDirectories = readManifest(maniFile);	// grab source directories from manifest
 			rootDirectory = findRoot(Paths.get(src));	// get root directory from source
 			
 			for(File s: sourceDirectories) {
@@ -54,30 +43,13 @@ public class CheckOut extends Repository{
 		System.out.println("Checkout Successful\n");
 	}
 	
-	//return root directory
-	public String findRoot(Path directory) throws RepoException {
-			try (DirectoryStream<Path> ds = Files.newDirectoryStream(directory)) {
-				for (Path child : ds) {
-						if (Files.isDirectory(child)) {
-							File fileList[] = directory.toFile().listFiles();
-							for(File f : fileList) {
-								if(f.toString().contains(".mani")) { // if files in the directory contains manifest files, root is found
-									return child.getParent().toString();
-								}
-							}
-							findRoot(child);
-						}
-					}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				System.out.println("Error walking through directories");
-			}
-			if (rootDirectory == null) throw new RepoException("Not a repository");
-		return null;
-		
-	}
-
+	/**
+	 * This function generates a manifest file 
+	 * 
+	 * @param manifest
+	 *            Manifest file to use
+	 * @return Nothing
+	 */
 	@Override
 	public void generateManifest(File manifest) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(manifest, true));
@@ -99,58 +71,5 @@ public class CheckOut extends Repository{
 		bw.close();
 	}
 	
-	public ArrayList<File> readManifest(){
-		ArrayList<File> FileList = new ArrayList<File>();
-		try {
-			Scanner read = new Scanner(maniFile);
-			while(read.hasNext()){ 
-				String line = read.nextLine(); //read labels line by line
-
-				if(line.contains("File Copied Info:")){			
-					FileList.add(new File(line.substring(nthIndexOf(line," ",5), line.length()).trim()));
-				}
-			}
-			read.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} 
-		return FileList; // return list of directories from manifest
-	}
-	
-	 // copies contents from one file to another
-	public void copyFile(File source, File target, String fileName){
-		PrintWriter writer = null;
-		Scanner read = null;
-		try {
-			read = new Scanner(source);
-			if(!target.exists()){
-				target.mkdirs();
-			}
-			writer = new PrintWriter(target + File.separator + fileName);
-			do {
-				String line = read.nextLine();
-				writer.println(line);
-			} while (read.hasNext());
-
-		} catch (FileNotFoundException e) {
-			System.out.println("Write Error: File not found");
-		} catch (NoSuchElementException e) {
-			System.out.println("Warning: file at "+ target.getName() + " is empty");
-		} catch (Exception e) {
-			System.out.println("Error writing to file: " + e);
-		}finally {
-			read.close();
-			writer.close();
-			filesCopied.add("File Copied Info: " + fileName + " " + source.getName() + " " + target + File.separator + fileName + "\r\n");
-		}
-	}
-	
-	// return nthIndex of substring in select string
-	public  int nthIndexOf(String s, String sub, int n) {
-		int index = s.indexOf(sub);
-		while (--n > 0 && index != -1)
-			index = s.indexOf(sub, index + 1);
-		return index;
-	}
 }
 
