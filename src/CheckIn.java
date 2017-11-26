@@ -25,21 +25,7 @@ public class CheckIn extends Repository{
 	public void execute() throws RepoException, IOException{
 		if ((target != "")&&(src != "")){
 			
-			File repoRoot = new File(target);
-			File srcRoot = new File(src);
-			
-			boolean rootFound = false;
-			for (File f : repoRoot.listFiles()){
-				if (f.getName().equals(srcRoot.getName())){
-					checkRepo(src, f.getAbsolutePath());
-					rootFound = true;
-					break;
-				}
-			}
-			
-			if (!rootFound){
-				throw new RepoException("Root folder does not exist");
-			}
+			checkRepo(src, target);
 			
 			File mani = new File(target + File.separator + getMostCurrentManiName(Command.CHECKIN, target));
 			generateManifest(mani);
