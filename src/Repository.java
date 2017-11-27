@@ -199,6 +199,29 @@ public abstract class Repository {
 		
 	}
 	
+	public File findFile(File file, String target)
+	{
+		File[] fileList = file.listFiles();
+		
+		for (File subFile: fileList)
+		{
+			if (subFile.isDirectory())
+			{
+				File targetFile = findFile(subFile, target);
+				if (targetFile != null)
+				{
+					return targetFile;
+				}
+			}
+			else if (subFile.isFile() && subFile.getName().equals(target))
+			{
+				return subFile;
+			}
+			
+		}
+		return null;
+	}
+	
 	public File getGrandfather(File repo, String rMani, String tMani) throws IOException
 	{
 		String grandfather = "Grandfather not found.";

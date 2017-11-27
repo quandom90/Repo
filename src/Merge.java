@@ -1,8 +1,11 @@
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Merge extends Repository
@@ -64,16 +67,20 @@ public class Merge extends Repository
 				if (relativeSrc.equals(relativeTarget)){
 	
 					if (!fSrc.getName().equals(fTar.getName())){
-						//Handle Conflict!!!!!!!
+						//	Find root of the repo project tree to read manifest data
 						File repoRoot = new File(findRoot(Paths.get(src)));
-						File grandFatherMani = getGrandfather(repoRoot, manifestRepo.getName(), manifestTarget.getName());
-						// Find conflicting file from files copied info and add it into project tree T
+						
+						//	Merge conflicting files into the target tree
+						//	and have the user handle the conflicts
+						mergeConflicts(fSrc, fTar, repoRoot);
 					}
 					
 					newFile = false;
 					break;
 				}
 			}
+			
+			
 			
 			//If there is a new file in the repo R not yet in the project tree T 
 			//based from the manifest files then this adds the file to T
@@ -109,6 +116,8 @@ public class Merge extends Repository
 				copyFile(fSrc, targetDest, targetName);
 				
 			}
+			
+			
 		}
 	}
 	
@@ -138,15 +147,17 @@ public class Merge extends Repository
 					if (!fSrc.getName().equals(fileAID)){
 						//Handle Conflict!!!
 						File repoRoot = new File(findRoot(Paths.get(src)));
+						System.out.println("Root path: "+repoRoot.getAbsolutePath());
 						File grandFatherMani = getGrandfather(repoRoot, manifestRepo.getName(), manifestTarget.getName());
 						// Find conflicting file from files copied info and add it into project tree T
 					}
 				}
+			
 			}else{
 				checkFolderExist(target, targetPath);
 				copyFile(fSrc, fileToCheck.getParentFile(), fileToCheck.getName());
 			}
-				
+			
 		}	
 	}
 	
@@ -191,6 +202,86 @@ public class Merge extends Repository
 		}
 		
 		return result;
+	}
+	
+	public void mergeConflicts(File fTar, File fSrc, File repoRoot) throws IOException
+	{
+		//	fSrc and fTar are the conflicting files
+		String tarConParent = fTar.getParentFile().getName();
+		String[] tarConSplit = tarConParent.split("\\.");
+		
+		String srcConParent = fSrc.getParentFile().getName();
+		String[] srcConSplit = srcConParent.split("\\.");
+		
+		//	Find conflicting file in the target project tree
+		File tarFile = findFile(new File(target), tarConParent);
+		
+		//	Get manifest files to link conflicting files to its proper tree versions
+		//	And then copy each version into the target project tree
+		File[] ciManiFiles = repoRoot.listFiles(new FilenameFilter() {
+			public boolean accept(File repoRoot, String name) {
+				return name.matches("checkin\\d+.mani");
+			}
+		});
+		
+		for (File ciMani: ciManiFiles)
+		{
+			Scanner scMani = new Scanner(ciMani);
+			while (scMani.hasNext())
+			{
+				String line = scMani.nextLine();
+
+				if (line.contains("File Copied Info:"))
+				{	
+					String[] fileInfo = line.split("\\s+");
+					if (fileInfo[3].equals(fSrc.getName()) && fileInfo[4].equals(srcConParent))
+					{
+						File sFile = new File(fileInfo[5]);
+						String tName = srcConSplit[0]+"_MR."+srcConSplit[1];
+						File tFile = new File(tarFile.getParent() + File.separator + tName);
+						File tDest = new File(tarFile.getParent());
+						copyFile(sFile, tDest, tName);
+						System.out.println("Conflicting file " + tName + " at " + tDest.getAbsolutePath());
+					}
+					if (fileInfo[3].equals(fTar.getName()) && fileInfo[4].equals(tarConParent))
+					{
+						File sFile = new File(fileInfo[5]);
+						String tName = tarConSplit[0]+"_MT."+tarConSplit[1];
+						File tFile = new File(tarFile.getParent() + File.separator + tName);
+						File tDest = new File(tarFile.getParent());
+						copyFile(sFile, tDest, tName);
+						System.out.println("Conflicting file " + tName + " at " + tDest.getAbsolutePath());
+					}
+				}
+			}
+			scMani.close();
+		}
+		
+		//	Get grandfather conflicting file from mani
+		//	and copy it into the project tree, too
+		File grandFatherMani = getGrandfather(repoRoot, manifestRepo.getName(), manifestTarget.getName());
+		
+		Scanner sc = new Scanner(grandFatherMani);
+		while (sc.hasNext())
+		{
+			String line = sc.nextLine();
+
+			if (line.contains("File Copied Info:"))
+			{	
+				String[] fileInfo = line.split("\\s+");
+				if (fileInfo[4].equals(srcConParent))
+				{
+					File sFile = new File(fileInfo[5]);
+					String tName = tarConSplit[0]+"_MG."+tarConSplit[1];
+					File tFile = new File(tarFile.getParent() + File.separator + tName);
+					File tDest = new File(tarFile.getParent());
+					copyFile(sFile, tDest, tName);
+					Files.deleteIfExists(tarFile.toPath());
+					System.out.println("Conflicting file " + tName + " at " + tDest.getAbsolutePath());
+				}
+			}
+		}
+		sc.close();
 	}
 
 }
