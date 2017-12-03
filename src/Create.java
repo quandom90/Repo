@@ -10,6 +10,16 @@ import java.io.OutputStream;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Class: Create
+ * 
+ * @author	Quan Nguyen: quanlynguyen90@gmail.com
+ * @author	Marvin Mendez: reacxtion@gmail.com
+ * @author	Mingtau Li: minijordon@gmail.com
+ * 
+ * @description: Executes creation of a repo and its manifest file
+ */
+
 public class Create extends Repository{
 	
 	public Create(String src, String target) {

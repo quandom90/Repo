@@ -11,6 +11,16 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
+/**
+ * Class: CheckIn
+ * 
+ * @author	Quan Nguyen: quanlynguyen90@gmail.com
+ * @author	Marvin Mendez: reacxtion@gmail.com
+ * @author	Mingtau Li: minijordon@gmail.com
+ * 
+ * @description: Peforms check in functions and generates manifest for check in
+ */
+
 public class CheckIn extends Repository{
 	
 	private HashMap<String, String> upToDateFiles; 

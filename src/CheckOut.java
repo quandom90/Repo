@@ -7,6 +7,15 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * Class: CheckOut
+ * 
+ * @author	Quan Nguyen: quanlynguyen90@gmail.com
+ * @author	Marvin Mendez: reacxtion@gmail.com
+ * @author	Mingtau Li: minijordon@gmail.com
+ * 
+ * @description: check in version of file from repository to target folder
+ */
 
 public class CheckOut extends Repository{
 	private File maniFile;	// manifest file

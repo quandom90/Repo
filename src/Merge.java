@@ -8,6 +8,16 @@ import java.util.Scanner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * Class: Create
+ * 
+ * @author	Quan Nguyen: quanlynguyen90@gmail.com
+ * @author	Marvin Mendez: reacxtion@gmail.com
+ * @author	Mingtau Li: minijordon@gmail.com
+ * 
+ * @description: Merges two project trees through their checkin manifests
+ */
+
 public class Merge extends Repository
 {
 	private File manifestRepo;
@@ -46,7 +56,13 @@ public class Merge extends Repository
 	}
 	
 	/*
-	 * Call if user inputs source with manifest and target with manifest
+	 * 	Merge functions to handle conflicts depending on input.
+	 *	Call if user inputs source and target with manifest files.
+	 * 	@param
+	 * 		void
+	 * 	@return
+	 * 		void
+	 * 
 	 */
 	private void mergeWithManifest() throws RepoException, IOException{
 		ArrayList<File> srcList = readManifest(manifestRepo);
@@ -72,7 +88,7 @@ public class Merge extends Repository
 						
 						//	Merge conflicting files into the target tree
 						//	and have the user handle the conflicts
-						mergeConflicts(fSrc, fTar, repoRoot);
+						mergeConflicts(fSrc, fTar, repoRoot, null);
 					}
 					
 					newFile = false;
@@ -122,7 +138,13 @@ public class Merge extends Repository
 	}
 	
 	/*
-	 * Call if user input source with manifest and file path of target only
+	 * 
+	 * 	Call if user inputs manifest for the source and a path for the target
+	 * 	@param
+	 * 		void
+	 * 	@return
+	 * 		void
+	 * 
 	 */
 	private void mergeWithPath() throws RepoException, IOException{
 		ArrayList<File> repoMani = readManifest(manifestRepo);
@@ -132,11 +154,12 @@ public class Merge extends Repository
 			File project = new File(projectFile);
 			File real = fSrc.getParentFile();
 			
+			String tarProjName = target + File.separator + project.getName();
 			if (!target.contains(project.getName())){
-				target += (File.separator + project.getName());
+				tarProjName = target + File.separator + project.getName();
 			}
 			
-			String targetPath = real.getAbsolutePath().replace(project.getAbsolutePath(), target);
+			String targetPath = real.getAbsolutePath().replace(project.getAbsolutePath(), tarProjName);
 			
 			File fileToCheck = new File(targetPath);
 			
@@ -145,16 +168,39 @@ public class Merge extends Repository
 					String fileAID = aid(fileToCheck);
 					
 					if (!fSrc.getName().equals(fileAID)){
-						//Handle Conflict!!!
+						//	Handle conflicts
 						File repoRoot = new File(findRoot(Paths.get(src)));
-						System.out.println("Root path: "+repoRoot.getAbsolutePath());
-						File grandFatherMani = getGrandfather(repoRoot, manifestRepo.getName(), manifestTarget.getName());
-						// Find conflicting file from files copied info and add it into project tree T
+						//	Assume latest check-in is the target project tree's check-in and retrieve it
+						String nextCIManiNum = getMostCurrentManiName(Command.CHECKIN, repoRoot.getAbsolutePath()).replaceAll("\\D+", "");
+						int currCIManiNum = Integer.parseInt(nextCIManiNum) - 1;
+						String currCIMani = "checkin"+currCIManiNum+".mani";
+						
+						File[] ciManiFiles = repoRoot.listFiles(new FilenameFilter() {
+							public boolean accept(File repoRoot, String name) {
+								return name.matches("checkin\\d+.mani");
+							}
+						});
+						
+						File targetMani = null;
+						for (File ciMani: ciManiFiles)
+						{
+							if (ciMani.getName().equals(currCIMani))
+							{
+								targetMani = ciMani;
+							}
+						}
+						
+						if (targetMani != null)
+						{
+							File fTar = findFile(repoRoot, fileAID);
+							mergeConflicts(fSrc, fTar, repoRoot, targetMani);
+						}
 					}
 				}
 			
-			}else{
-				checkFolderExist(target, targetPath);
+			}
+			else{
+				checkFolderExist(tarProjName, targetPath);
 				copyFile(fSrc, fileToCheck.getParentFile(), fileToCheck.getName());
 			}
 			
@@ -204,7 +250,23 @@ public class Merge extends Repository
 		return result;
 	}
 	
-	public void mergeConflicts(File fTar, File fSrc, File repoRoot) throws IOException
+	/*
+	 * 
+	 * 	This function finds the conflicting files
+	 * 	and notifies the user which files they are
+	 * 	@param fTar
+	 * 		target file
+	 * 	@param fSrc
+	 * 		source file
+	 * 	@param repoRoot
+	 * 		repository root directory
+	 * 	@param maniTar
+	 * 		manifest target file
+	 * 	@return
+	 * 		void
+	 * 
+	 */
+	public void mergeConflicts(File fTar, File fSrc, File repoRoot, File maniTar) throws IOException
 	{
 		//	fSrc and fTar are the conflicting files
 		String tarConParent = fTar.getParentFile().getName();
@@ -237,7 +299,7 @@ public class Merge extends Repository
 					if (fileInfo[3].equals(fSrc.getName()) && fileInfo[4].equals(srcConParent))
 					{
 						File sFile = new File(fileInfo[5]);
-						String tName = srcConSplit[0]+"_MR."+srcConSplit[1];
+						String tName = srcConSplit[0]+"_MT."+srcConSplit[1];
 						File tFile = new File(tarFile.getParent() + File.separator + tName);
 						File tDest = new File(tarFile.getParent());
 						copyFile(sFile, tDest, tName);
@@ -246,7 +308,7 @@ public class Merge extends Repository
 					if (fileInfo[3].equals(fTar.getName()) && fileInfo[4].equals(tarConParent))
 					{
 						File sFile = new File(fileInfo[5]);
-						String tName = tarConSplit[0]+"_MT."+tarConSplit[1];
+						String tName = tarConSplit[0]+"_MR."+tarConSplit[1];
 						File tFile = new File(tarFile.getParent() + File.separator + tName);
 						File tDest = new File(tarFile.getParent());
 						copyFile(sFile, tDest, tName);
@@ -257,6 +319,11 @@ public class Merge extends Repository
 			scMani.close();
 		}
 		
+		
+		if(manifestTarget == null)
+		{
+			manifestTarget = maniTar;
+		}
 		//	Get grandfather conflicting file from mani
 		//	and copy it into the project tree, too
 		File grandFatherMani = getGrandfather(repoRoot, manifestRepo.getName(), manifestTarget.getName());

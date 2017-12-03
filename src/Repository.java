@@ -13,6 +13,16 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * Class: Create
+ * 
+ * @author	Quan Nguyen: quanlynguyen90@gmail.com
+ * @author	Marvin Mendez: reacxtion@gmail.com
+ * @author	Mingtau Li: minijordon@gmail.com
+ * 
+ * @description: Abstract Repository class
+ */
+
 public abstract class Repository {
 	
 	public enum Command {
@@ -199,6 +209,17 @@ public abstract class Repository {
 		
 	}
 	
+	/*
+	 * 
+	 * 	This function finds a specific file in a directory
+	 * 	@param file
+	 * 			directory to search
+	 * 	@param target
+	 * 			target file name
+	 * 	@return
+	 * 			File that matches target name
+	 * 
+	 */
 	public File findFile(File file, String target)
 	{
 		File[] fileList = file.listFiles();
@@ -222,6 +243,19 @@ public abstract class Repository {
 		return null;
 	}
 	
+	/*
+	 * 
+	 * 	This function finds the grandfather file of two conflicting files
+	 * 	@param repo
+	 * 			repository directory
+	 * 	@param rMani
+	 * 			repository tree manifest filename
+	 * 	@param tMani
+	 * 			target project tree manifest filename
+	 * 	@return
+	 * 			Grandfather file of repository and target file from manifests
+	 * 
+	 */
 	public File getGrandfather(File repo, String rMani, String tMani) throws IOException
 	{
 		String grandfather = "Grandfather not found.";
@@ -261,6 +295,13 @@ public abstract class Repository {
 		return grandMani;
 	}
 	
+	/*
+	 * 
+	 * 	Inner class Node
+	 * 	Sets up a node structure with name, data, and parent information
+	 * 	with an option to include children
+	 * 
+	 */
 	public class Node
 	{
 		String name;
@@ -281,6 +322,17 @@ public abstract class Repository {
 		}
 	}
 	
+	/*
+	 * 
+	 * 	This function finds the path from a source node to a root node
+	 * 	@param startNode
+	 * 			source or starting node
+	 * 	@param nodes
+	 * 			ArrayList of the nodes in a project or repository tree
+	 * 	@return
+	 * 			ArrayList of string filenames of the nodes in path
+	 * 
+	 */
 	public ArrayList<String> findPathToRoot(Node startNode, ArrayList<Node> nodes)
 	{
 		ArrayList<String> nodeToRoot = new ArrayList<String>();
@@ -354,6 +406,17 @@ public abstract class Repository {
 		return index;
 	}
 	
+	/*
+	 * 
+	 * 	This function reads the data from the manifest files
+	 * 	in the repository to produce an ArrayList of nodes
+	 * 	in the repository tree
+	 * 	@param repo
+	 * 			repository directory
+	 * 	@return
+	 * 			ArrayList of nodes with manifest data in the repository tree
+	 * 
+	 */
 	public ArrayList<Node> getManifestData(File repo) throws IOException
 	{
 		ArrayList<Node> nodes = new ArrayList<Node>();
