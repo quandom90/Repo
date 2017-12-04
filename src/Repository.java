@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
@@ -113,21 +112,24 @@ public abstract class Repository {
 	 */
 	public String aid(File file){
 		try {
-			FileInputStream fileRead = new FileInputStream(file);
+			FileReader fileRead = new FileReader(file);
 			
 			int c = fileRead.read();
 			int[] weight = {1, 3, 7, 11, 17};
 			int weightIndex = 0;
 			int checkSum = 0;
+			int size = 0;
 			
 			while(c != -1){
-				 if ((char) c != '\n'){
+				 if (((char) c != '\n')&&((char) c != '\r')){
 					 checkSum += (weight[weightIndex] * c);
 					 
 					 if (weightIndex >= 4)
 							weightIndex = 0;
 						else
 							weightIndex++;
+					 
+					 size++;
 				 }
 				 
 				 c = fileRead.read();
@@ -136,7 +138,7 @@ public abstract class Repository {
 			fileRead.close();
 			String[] fileName = file.getName().split("\\.");
 			String ext = fileName[fileName.length - 1];
-			return (checkSum + "." + file.length() + "." + ext);
+			return (checkSum + "." + size + "." + ext);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

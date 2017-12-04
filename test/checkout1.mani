@@ -3,10 +3,11 @@
 
 
 Command: check-out
-Time repo checked out: Wed, 22 Nov 2017 06:35:31 -0800
-User command: check-out E:\Repo\SCM2\test E:\Repo\SCM2\test_co
-Source path: E:\Repo\SCM2\test
-Target path: E:\Repo\SCM2\test_co
-File Copied Info: goodbye.txt E:\Repo\SCM2\test\mypt\goodbye.txt\5142.13.txt E:\Repo\SCM2\test_co\mypt\goodbye.txt
-File Copied Info: hello.txt E:\Repo\SCM2\test\mypt\hello.txt\18785.28.txt E:\Repo\SCM2\test_co\mypt\hello.txt
-File Copied Info: hx.txt E:\Repo\SCM2\test\mypt\hx.txt\387.2.txt E:\Repo\SCM2\test_co\mypt\hx.txt
+Time repo checked out: Sun, 3 Dec 2017 17:25:50 -0800
+User command: check-out E:\Repo\SCM4\test E:\Repo\SCM4\test_co
+Source path: E:\Repo\SCM4\test
+Target path: E:\Repo\SCM4\test_co
+Manifest: create.mani
+File Copied Info: hx.txt E:\Repo\SCM4\test\mypt2\hx.txt\291.2.txt E:\Repo\SCM4\test_co\mypt2\hx.txt
+File Copied Info: goodbye.txt E:\Repo\SCM4\test\mypt2\Stuff\goodbye.txt\4371.7.txt E:\Repo\SCM4\test_co\mypt2\Stuff\goodbye.txt
+File Copied Info: hello.txt E:\Repo\SCM4\test\mypt2\Stuff\hello.txt\15496.20.txt E:\Repo\SCM4\test_co\mypt2\Stuff\hello.txt

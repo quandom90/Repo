@@ -1,12 +1,12 @@
-mypt
+mypt2
 
 
 
 Command: create-repo
-Time repo created: Wed, 22 Nov 2017 06:29:36 -0800
-User command: create-repo E:\Repo\SCM2\mypt E:\Repo\SCM2\test
-Source path: E:\Repo\SCM2\mypt
-Target path: E:\Repo\SCM2\test
-File Copied Info: 5142.13.txt goodbye.txt E:\Repo\SCM2\test\mypt\goodbye.txt\5142.13.txt
-File Copied Info: 18785.28.txt hello.txt E:\Repo\SCM2\test\mypt\hello.txt\18785.28.txt
-File Copied Info: 387.2.txt hx.txt E:\Repo\SCM2\test\mypt\hx.txt\387.2.txt
+Time repo created: Sun, 3 Dec 2017 17:25:31 -0800
+User command: create-repo E:\Repo\SCM4\mypt2 E:\Repo\SCM4\test
+Source path: E:\Repo\SCM4\mypt2
+Target path: E:\Repo\SCM4\test
+File Copied Info: 291.2.txt hx.txt E:\Repo\SCM4\test\mypt2\hx.txt\291.2.txt
+File Copied Info: 4371.7.txt goodbye.txt E:\Repo\SCM4\test\mypt2\Stuff\goodbye.txt\4371.7.txt
+File Copied Info: 15496.20.txt hello.txt E:\Repo\SCM4\test\mypt2\Stuff\hello.txt\15496.20.txt

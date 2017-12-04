@@ -3,9 +3,9 @@
 
 
 Command: check-in
-Time of check-in: Sun, 3 Dec 2017 17:36:45 -0800
-User command: check-in E:\Repo\SCM4\test_co\mypt2 E:\Repo\SCM4\test
-Source path: E:\Repo\SCM4\test_co\mypt2
+Time of check-in: Sun, 3 Dec 2017 17:50:58 -0800
+User command: check-in E:\Repo\SCM4\mypt2 E:\Repo\SCM4\test
+Source path: E:\Repo\SCM4\mypt2
 Target path: E:\Repo\SCM4\test
 File Copied Info: 72.1.txt hx.txt E:\Repo\SCM4\test\mypt2\hx.txt\72.1.txt
 File Copied Info: 4371.7.txt goodbye.txt E:\Repo\SCM4\test\mypt2\Stuff\goodbye.txt\4371.7.txt

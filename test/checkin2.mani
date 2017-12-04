@@ -3,10 +3,13 @@
 
 
 Command: check-in
-Time of check-in: Wed, 22 Nov 2017 06:46:11 -0800
-User command: check-in E:\Repo\SCM2\mypt E:\Repo\SCM2\test
-Source path: E:\Repo\SCM2\mypt
-Target path: E:\Repo\SCM2\test
-File Copied Info: 9888.21.txt goodbye.txt E:\Repo\SCM2\test\mypt\goodbye.txt\9888.21.txt
-File Copied Info: 18785.28.txt hello.txt E:\Repo\SCM2\test\mypt\hello.txt\18785.28.txt
-File Copied Info: 387.2.txt hx.txt E:\Repo\SCM2\test\mypt\hx.txt\387.2.txt
+Time of check-in: Sun, 3 Dec 2017 17:27:14 -0800
+User command: check-in E:\Repo\SCM4\test_co\mypt2 E:\Repo\SCM4\test
+Source path: E:\Repo\SCM4\test_co\mypt2
+Target path: E:\Repo\SCM4\test
+File Copied Info: 291.2.txt hx.txt E:\Repo\SCM4\test\hx.txt\291.2.txt
+File Copied Info: 291.2.txt hx.txt E:\Repo\SCM4\test\mypt2\hx.txt\291.2.txt
+File Copied Info: 4371.7.txt goodbye.txt E:\Repo\SCM4\test\mypt2\Stuff\goodbye.txt\4371.7.txt
+File Copied Info: 15496.20.txt hello.txt E:\Repo\SCM4\test\mypt2\Stuff\hello.txt\15496.20.txt
+File Copied Info: 4371.7.txt goodbye.txt E:\Repo\SCM4\test\Stuff\goodbye.txt\4371.7.txt
+File Copied Info: 15496.20.txt hello.txt E:\Repo\SCM4\test\Stuff\hello.txt\15496.20.txt
